@@ -3,11 +3,35 @@ Tkinter GUI for Minesweeper that recreates the Windows 3.11 appearance.
 """
 
 import tkinter as tk
-from tkinter import messagebox, Menu
+from tkinter import messagebox, Menu, font
 import time
 from typing import Optional
 
 from ..game import MinesweeperGame, GameState, Difficulty, CellState
+
+
+def _get_best_digital_font():
+    """Get the best available digital-style font for counters."""
+    # Try digital-style fonts in order of preference
+    candidates = [
+        ('Consolas', 22, 'bold'),
+        ('Monaco', 22, 'bold'), 
+        ('Lucida Console', 22, 'bold'),
+        ('Courier New', 22, 'bold'),
+        ('monospace', 22, 'bold')
+    ]
+    
+    for font_spec in candidates:
+        try:
+            # Test if font is available
+            test_font = font.Font(family=font_spec[0], size=font_spec[1], weight=font_spec[2])
+            if test_font.actual()['family']:  # Font is available
+                return font_spec
+        except:
+            continue
+    
+    # Fallback to default
+    return ('TkDefaultFont', 20, 'bold')
 
 
 class MinesweeperGUI:
@@ -45,6 +69,7 @@ class MinesweeperGUI:
         self.start_time = None
         self.timer_running = False
         self.last_cell_states = {}  # Track cell states to minimize updates
+        self.digital_font = _get_best_digital_font()  # Get best digital font
         
         self._setup_window()
         self._create_menu()
@@ -146,7 +171,7 @@ class MinesweeperGUI:
             text=f"{self.game.get_remaining_mines():03d}",
             bg='black',
             fg='red',
-            font=('Courier New', 20, 'bold'),  # Larger font like classic
+            font=self.digital_font,  # Use the best available digital font
             width=3,
             anchor='center'
         )
@@ -175,7 +200,7 @@ class MinesweeperGUI:
             text="000",
             bg='black',
             fg='red',
-            font=('Courier New', 20, 'bold'),  # Larger font like classic
+            font=self.digital_font,  # Use the best available digital font
             width=3,
             anchor='center'
         )
@@ -203,7 +228,7 @@ class MinesweeperGUI:
                     text="",
                     width=2,
                     height=1,
-                    font=('Arial', 12, 'bold'),  # Increased from 9 to 12 for better proportion
+                    font=('Arial', 14, 'bold'),  # Optimized font size for better proportion
                     bg=self.COLORS['button_face'],
                     relief=tk.RAISED,
                     bd=2
