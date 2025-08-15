@@ -203,7 +203,7 @@ class MinesweeperGUI:
                     text="",
                     width=2,
                     height=1,
-                    font=('Arial', 9, 'bold'),
+                    font=('Arial', 12, 'bold'),  # Increased from 9 to 12 for better proportion
                     bg=self.COLORS['button_face'],
                     relief=tk.RAISED,
                     bd=2
@@ -220,6 +220,11 @@ class MinesweeperGUI:
     def _on_left_click(self, row: int, col: int):
         """Handle left mouse click on a cell."""
         if self.game.game_state in [GameState.WON, GameState.LOST]:
+            return
+            
+        # Don't allow clicks on already revealed cells
+        cell = self.game.grid[row][col]
+        if cell.is_revealed:
             return
             
         # Start timer on first click
@@ -250,6 +255,11 @@ class MinesweeperGUI:
         if self.game.game_state in [GameState.WON, GameState.LOST]:
             return
             
+        # Don't allow right-click on already revealed cells
+        cell = self.game.grid[row][col]
+        if cell.is_revealed:
+            return
+            
         self.game.flag_cell(row, col)
         self._update_display()
     
@@ -278,23 +288,32 @@ class MinesweeperGUI:
                             text="🚩",
                             bg=self.COLORS['button_face'],
                             relief=tk.RAISED,
-                            fg=self.COLORS['text']
+                            fg=self.COLORS['text'],
+                            state=tk.NORMAL,  # Keep enabled for unflagging
+                            bd=2
                         )
                     elif cell.state == CellState.QUESTIONED:
                         btn.config(
                             text="?",
                             bg=self.COLORS['button_face'],
                             relief=tk.RAISED,
-                            fg=self.COLORS['text']
+                            fg=self.COLORS['text'],
+                            state=tk.NORMAL,  # Keep enabled for cycling
+                            bd=2
                         )
                     elif cell.state == CellState.REVEALED:
+                        # Disable button functionality for revealed cells
+                        btn.config(state=tk.DISABLED)
+                        
                         if cell.is_mine:
                             # Show mine
                             btn.config(
                                 text="💣",
                                 bg=self.COLORS['mine_red'],
-                                relief=tk.SUNKEN,
-                                fg=self.COLORS['text']
+                                relief=tk.FLAT,  # Changed from SUNKEN to FLAT for flatter appearance
+                                fg=self.COLORS['text'],
+                                bd=1,  # Reduced border for flatter look
+                                disabledforeground=self.COLORS['text']  # Ensure text shows when disabled
                             )
                         elif cell.adjacent_mines > 0:
                             # Show number
@@ -303,24 +322,30 @@ class MinesweeperGUI:
                             btn.config(
                                 text=str(cell.adjacent_mines),
                                 bg=self.COLORS['background'],
-                                relief=tk.SUNKEN,
-                                fg=color
+                                relief=tk.FLAT,  # Changed from SUNKEN to FLAT for flatter appearance
+                                fg=color,
+                                bd=1,  # Reduced border for flatter look
+                                disabledforeground=color  # Ensure text shows when disabled
                             )
                         else:
                             # Empty cell
                             btn.config(
                                 text="",
                                 bg=self.COLORS['background'],
-                                relief=tk.SUNKEN,
-                                fg=self.COLORS['text']
+                                relief=tk.FLAT,  # Changed from SUNKEN to FLAT for flatter appearance
+                                fg=self.COLORS['text'],
+                                bd=1,  # Reduced border for flatter look
+                                disabledforeground=self.COLORS['text']  # Ensure text shows when disabled
                             )
                     else:
-                        # Hidden cell
+                        # Hidden cell - ensure it's enabled
                         btn.config(
                             text="",
                             bg=self.COLORS['button_face'],
                             relief=tk.RAISED,
-                            fg=self.COLORS['text']
+                            fg=self.COLORS['text'],
+                            state=tk.NORMAL,  # Re-enable button
+                            bd=2  # Full border for raised appearance
                         )
     
     def _update_timer(self):
