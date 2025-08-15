@@ -58,3 +58,7 @@ htmlcov/
 # Temporary files
 *.tmp
 *.temp
+test_*.py
+current_state_*.png
+dejavu_*.png
+final_dejavu_*.png

@@ -34,7 +34,16 @@ This document details the specific fixes made to address the visual issues and f
 - Added better padding (3px instead of 2px) for proper spacing
 - Enhanced LED-style appearance with proper centering
 
-### 5. Windows Shortcut (Additional Requirement)
+### 5. Enhanced Counter Fonts (Issue #6)
+**Problem**: Fonts still needed to be bigger and look more like a digital clock with sectional fonts
+**Solution**: 
+- Increased font size significantly from 20pt to 32pt bold (60% larger)
+- Changed font from 'Courier New' to 'DejaVu Sans Mono' for authentic digital display appearance
+- Improved padding from 3px to 5px to accommodate larger fonts
+- The monospace DejaVu Sans Mono font provides sectional appearance similar to digital clocks
+- Much more prominent and readable counter displays
+
+### 6. Windows Shortcut (Additional Requirement)
 **Solution**: 
 - Created `Minesweeper.bat` for immediate use
 - Created `create_shortcut.py` script to generate proper .lnk shortcuts
