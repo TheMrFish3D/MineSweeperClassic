@@ -146,11 +146,11 @@ class MinesweeperGUI:
             text=f"{self.game.get_remaining_mines():03d}",
             bg='black',
             fg='red',
-            font=('Courier New', 20, 'bold'),  # Larger font like classic
+            font=('DejaVu Sans Mono', 32, 'bold'),  # Extra large digital-style font for maximum visibility
             width=3,
             anchor='center'
         )
-        self.mines_label.pack(padx=3, pady=3)
+        self.mines_label.pack(padx=5, pady=5)
         
         # Smiley button
         self.smiley_button = tk.Button(
@@ -175,11 +175,11 @@ class MinesweeperGUI:
             text="000",
             bg='black',
             fg='red',
-            font=('Courier New', 20, 'bold'),  # Larger font like classic
+            font=('DejaVu Sans Mono', 32, 'bold'),  # Extra large digital-style font for maximum visibility
             width=3,
             anchor='center'
         )
-        self.timer_label.pack(padx=3, pady=3)
+        self.timer_label.pack(padx=5, pady=5)
         
         # Game grid
         grid_frame = tk.Frame(main_frame, bg=self.COLORS['background'], 

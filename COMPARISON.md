@@ -8,7 +8,7 @@
 
 ### 2. Mine/Timer Counters
 - **Before**: Small font (Courier 16pt), tight padding
-- **After**: Larger font (Courier New 20pt bold), proper spacing ✨ *More authentic LED display*
+- **After**: Large digital font (DejaVu Sans Mono 32pt bold), enhanced spacing ✨ *Prominent digital clock appearance*
 
 ### 3. Interface Performance
 - **Before**: Full screen refresh causing flashing
@@ -42,6 +42,7 @@ All core minesweeper features tested and confirmed working:
 - ✅ **Issue #2**: Mine clicking behavior → Verified working correctly  
 - ✅ **Issue #3**: Smiley face not yellow → Fixed with proper yellow background
 - ✅ **Issue #4**: Counter styling → Enhanced with larger fonts and better spacing
+- ✅ **Issue #6**: Bigger digital clock fonts → Enhanced with 32pt DejaVu Sans Mono for prominent display
 - ✅ **Bonus**: Windows shortcut files → Created batch file and .lnk generator
 
-The minesweeper now provides an authentic Windows 3.11 experience with smooth performance and proper visual styling.
+The minesweeper now provides an authentic Windows 3.11 experience with smooth performance, proper visual styling, and highly visible digital-style counters.
