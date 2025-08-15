@@ -44,6 +44,7 @@ class MinesweeperGUI:
         self.smiley_button = None
         self.start_time = None
         self.timer_running = False
+        self.last_cell_states = {}  # Track cell states to minimize updates
         
         self._setup_window()
         self._create_menu()
@@ -115,9 +116,14 @@ class MinesweeperGUI:
         
         self.timer_running = False
         self.start_time = None
+        self.last_cell_states = {}  # Reset cell state tracking
         
         self._create_widgets()
         self._update_display()
+        
+        # Reset smiley to normal state
+        if self.smiley_button:
+            self.smiley_button.config(text="🙂", bg='#ffff00')
     
     def _create_widgets(self):
         """Create all the GUI widgets."""
@@ -140,10 +146,11 @@ class MinesweeperGUI:
             text=f"{self.game.get_remaining_mines():03d}",
             bg='black',
             fg='red',
-            font=('Courier', 16, 'bold'),
-            width=3
+            font=('Courier New', 20, 'bold'),  # Larger font like classic
+            width=3,
+            anchor='center'
         )
-        self.mines_label.pack(padx=2, pady=2)
+        self.mines_label.pack(padx=3, pady=3)
         
         # Smiley button
         self.smiley_button = tk.Button(
@@ -152,7 +159,7 @@ class MinesweeperGUI:
             font=('Arial', 16),
             width=2,
             height=1,
-            bg=self.COLORS['button_face'],
+            bg='#ffff00',  # Yellow background like classic Windows minesweeper
             relief=tk.RAISED,
             bd=2,
             command=lambda: self.new_game()
@@ -168,10 +175,11 @@ class MinesweeperGUI:
             text="000",
             bg='black',
             fg='red',
-            font=('Courier', 16, 'bold'),
-            width=3
+            font=('Courier New', 20, 'bold'),  # Larger font like classic
+            width=3,
+            anchor='center'
         )
-        self.timer_label.pack(padx=2, pady=2)
+        self.timer_label.pack(padx=3, pady=3)
         
         # Game grid
         grid_frame = tk.Frame(main_frame, bg=self.COLORS['background'], 
@@ -225,12 +233,12 @@ class MinesweeperGUI:
         if not continue_game:
             # Game lost
             self.timer_running = False
-            self.smiley_button.config(text="😵")
+            self.smiley_button.config(text="😵", bg='#ffff00')
             messagebox.showinfo("Game Over", "You hit a mine! Game Over.")
         elif self.game.game_state == GameState.WON:
             # Game won
             self.timer_running = False
-            self.smiley_button.config(text="😎")
+            self.smiley_button.config(text="😎", bg='#ffff00')
             elapsed = int(time.time() - self.start_time) if self.start_time else 0
             messagebox.showinfo("Congratulations!", 
                               f"You won! Time: {elapsed} seconds")
@@ -251,57 +259,69 @@ class MinesweeperGUI:
         remaining = self.game.get_remaining_mines()
         self.mines_label.config(text=f"{remaining:03d}")
         
-        # Update grid
+        # Update grid - only update cells that have changed
         for row in range(self.game.height):
             for col in range(self.game.width):
                 cell = self.game.grid[row][col]
                 btn = self.cell_buttons[row][col]
                 
-                if cell.state == CellState.FLAGGED:
-                    btn.config(
-                        text="🚩",
-                        bg=self.COLORS['button_face'],
-                        relief=tk.RAISED
-                    )
-                elif cell.state == CellState.QUESTIONED:
-                    btn.config(
-                        text="?",
-                        bg=self.COLORS['button_face'],
-                        relief=tk.RAISED,
-                        fg=self.COLORS['text']
-                    )
-                elif cell.state == CellState.REVEALED:
-                    if cell.is_mine:
-                        # Show mine
+                # Create a state key for this cell
+                state_key = (row, col)
+                current_state = (cell.state, cell.is_mine, cell.adjacent_mines, cell.is_revealed)
+                
+                # Only update if state has changed
+                if state_key not in self.last_cell_states or self.last_cell_states[state_key] != current_state:
+                    self.last_cell_states[state_key] = current_state
+                    
+                    if cell.state == CellState.FLAGGED:
                         btn.config(
-                            text="💣",
-                            bg=self.COLORS['mine_red'],
-                            relief=tk.SUNKEN
+                            text="🚩",
+                            bg=self.COLORS['button_face'],
+                            relief=tk.RAISED,
+                            fg=self.COLORS['text']
                         )
-                    elif cell.adjacent_mines > 0:
-                        # Show number
-                        color = self.COLORS['numbers'].get(cell.adjacent_mines, 
-                                                         self.COLORS['text'])
+                    elif cell.state == CellState.QUESTIONED:
                         btn.config(
-                            text=str(cell.adjacent_mines),
-                            bg=self.COLORS['background'],
-                            relief=tk.SUNKEN,
-                            fg=color
+                            text="?",
+                            bg=self.COLORS['button_face'],
+                            relief=tk.RAISED,
+                            fg=self.COLORS['text']
                         )
+                    elif cell.state == CellState.REVEALED:
+                        if cell.is_mine:
+                            # Show mine
+                            btn.config(
+                                text="💣",
+                                bg=self.COLORS['mine_red'],
+                                relief=tk.SUNKEN,
+                                fg=self.COLORS['text']
+                            )
+                        elif cell.adjacent_mines > 0:
+                            # Show number
+                            color = self.COLORS['numbers'].get(cell.adjacent_mines, 
+                                                             self.COLORS['text'])
+                            btn.config(
+                                text=str(cell.adjacent_mines),
+                                bg=self.COLORS['background'],
+                                relief=tk.SUNKEN,
+                                fg=color
+                            )
+                        else:
+                            # Empty cell
+                            btn.config(
+                                text="",
+                                bg=self.COLORS['background'],
+                                relief=tk.SUNKEN,
+                                fg=self.COLORS['text']
+                            )
                     else:
-                        # Empty cell
+                        # Hidden cell
                         btn.config(
                             text="",
-                            bg=self.COLORS['background'],
-                            relief=tk.SUNKEN
+                            bg=self.COLORS['button_face'],
+                            relief=tk.RAISED,
+                            fg=self.COLORS['text']
                         )
-                else:
-                    # Hidden cell
-                    btn.config(
-                        text="",
-                        bg=self.COLORS['button_face'],
-                        relief=tk.RAISED
-                    )
     
     def _update_timer(self):
         """Update the timer display."""

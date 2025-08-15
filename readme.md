@@ -79,6 +79,15 @@ The codebase is organized into clear modules:
 - **gui/**: Handles the Tkinter interface and Windows 3.11 styling
 - **utils/**: Provides settings management and utility functions
 
+## Windows Shortcuts
+
+For easy launching on Windows:
+
+- **Minesweeper.bat**: Double-click to run the game directly
+- **create_shortcut.py**: Run this script to create a desktop shortcut (.lnk file)
+  - Requires `pywin32` package: `pip install pywin32`
+  - Creates a proper Windows shortcut on your desktop
+
 ## Contributing
 
 This project is set up for easy contribution and extension by AI agents or developers:
