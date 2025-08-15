@@ -1,0 +1,6 @@
+# No external dependencies required - using only Python standard library
+# Tkinter comes built-in with Python
+# For development/testing (optional):
+# pytest>=7.0.0
+# black>=22.0.0
+# flake8>=4.0.0
